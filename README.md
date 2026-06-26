@@ -16,10 +16,8 @@ tubeGrabber_v1/
 │   ├── model/
 │   │   └── best.pt          ← YOLO 模型（需自行放置）
 │   └── calib/
-│       ├── T_camera_to_base.npy   ← ETH 手眼矩阵（head 固定相机→基座）
-│       └── T_cam_end.npy          ← EIH 手眼矩阵（hand 相机→末端）
-├── third_party/
-│   └── RM_API2/             ← Realman SDK（需自行放置，或设环境变量）
+│       ├── T_cam2base.json    ← ETH 手眼矩阵（head 固定相机→基座）
+│       └── T_cam2end.json     ← EIH 手眼矩阵（hand 相机→末端）
 └── README.md
 ```
 
@@ -30,7 +28,7 @@ tubeGrabber_v1/
 ### 1. 依赖安装
 
 ```bash
-pip install numpy scipy opencv-python ultralytics pyyaml
+pip install -r requirements.txt
 pip install pyorbbecsdk   # Orbbec 相机 SDK
 ```
 
@@ -43,25 +41,13 @@ cp /path/to/best.pt tubeGrabber_v1/assets/model/best.pt
 ### 3. 放置手眼标定矩阵
 
 ```bash
-cp /path/to/T_camera_to_base.npy tubeGrabber_v1/assets/calib/
-cp /path/to/T_cam_end.npy        tubeGrabber_v1/assets/calib/
+cp /path/to/T_cam2base.json tubeGrabber_v1/assets/calib/
+cp /path/to/T_cam2end.json  tubeGrabber_v1/assets/calib/
 ```
 
-> 如果还没有标定矩阵，需要先运行手眼标定程序生成这两个 `.npy` 文件。
+> 标定结果为 JSON，需包含 `matrix` 字段（4×4 变换矩阵）。
 
-### 4. 配置 RM_API2 SDK（二选一）
-
-**方法 A**：直接放置到本目录
-```
-tubeGrabber_v1/third_party/RM_API2/Python/Robotic_Arm/...
-```
-
-**方法 B**：环境变量指向已有位置
-```bash
-export TUBE_RM_API2=/path/to/RM_API2
-```
-
-### 5. 修改 config.yaml
+### 4. 修改 config.yaml
 
 ```yaml
 arm:
@@ -72,7 +58,7 @@ cameras:
   hand_serial: "CP84B4100090"   # ← 改为 hand 相机序列号
 ```
 
-### 6. 首次使用初始化夹爪
+### 5. 首次使用初始化夹爪
 
 取消 `demo.py` 中以下注释（仅首次需要，约5秒）：
 ```python
@@ -169,7 +155,7 @@ print("盖中心 HSV:", hsv[y, x])   # y,x = 盖中心像素坐标
 | `Phase3 精定位失败` | HSV 阈值不匹配 | 调整 `hand_vision.hsv_upper/lower` |
 | `Phase3 深度无效` | 相机距目标太近/远 | 检查 `depth.min_m/max_m` 范围 |
 | `rm_movej_p 失败 code=1` | IK 无解（目标超出工作空间）| 检查 `hover_z` 是否合理 |
-| `找不到 RM_API2 SDK` | SDK 路径未配置 | 参考「准备步骤4」|
+| `ModuleNotFoundError: Robotic_Arm` | 机械臂 SDK 未安装 | `pip install "Robotic_Arm>=1.0.0"` |
 
 ---
 
@@ -180,8 +166,8 @@ print("盖中心 HSV:", hsv[y, x])   # y,x = 盖中心像素坐标
    tubeGrabber_v1  三阶段试管盖抓取 Demo（完全独立版）
 ══════════════════════════════════════════════════════════════
 
-[Init] ✓ ETH: T_camera_to_base.npy  shape=(4, 4)
-[Init] ✓ EIH: T_cam_end.npy  shape=(4, 4)
+[Init] ✓ ETH: T_cam2base.json  shape=(4, 4)
+[Init] ✓ EIH: T_cam2end.json  shape=(4, 4)
 [Init] 连接机械臂 192.168.1.18:8080 ...
 [Arm]  已连接 192.168.1.18:8080  handle=1
 [Init] 开启 head 相机...

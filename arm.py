@@ -13,19 +13,17 @@ import time
 
 import numpy as np
 from scipy.spatial.transform import Rotation
+from Robotic_Arm.rm_robot_interface import (
+    RoboticArm, rm_modbus_rtu_write_params_t, rm_thread_mode_e
+)
 
-from config import CFG, setup_rm_sdk
+from config import CFG
 
 
 class ArmController:
     """封装 Realman SDK，所有指令线程安全。"""
 
     def __init__(self):
-        setup_rm_sdk()
-
-        from Robotic_Arm.rm_robot_interface import (  # type: ignore
-            RoboticArm, rm_modbus_rtu_write_params_t, rm_thread_mode_e
-        )
 
         ac = CFG["arm"]
         self._lock     = threading.Lock()

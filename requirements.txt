@@ -4,12 +4,13 @@
 # SDK（需单独处理）：
 #   pyorbbecsdk  — Orbbec 相机 SDK，放到 external/ 目录后手动安装
 #                  或参考 https://github.com/orbbec/pyorbbecsdk
-#   RM_API2      — Realman 机械臂 SDK，放到 third_party/RM_API2/
-#                  或设环境变量 TUBE_RM_API2=/path/to/RM_API2
 
 # 数值计算
 numpy
 scipy
+
+# 机械臂
+Robotic_Arm>=1.0.0
 
 # 计算机视觉
 opencv-python
