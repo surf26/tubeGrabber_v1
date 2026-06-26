@@ -19,8 +19,8 @@ yolo:
   device: "cpu"     # "cpu" | "cuda:0"
 
 calib:
-  T_camera_to_base: "assets/calib/T_camera_to_base.npy"   # ETH head→base
-  T_cam_end:        "assets/calib/T_cam_end.npy"           # EIH hand_cam→end
+  T_camera_to_base: "assets/calib/T_cam2base.json"   # ETH head→base (eye_to_hand)
+  T_cam_end:        "assets/calib/T_cam2end.json"    # EIH hand_cam→end (eye_in_hand)
 
 # hand 相机 OpenCV 精定位参数（黑色盖）
 hand_vision:

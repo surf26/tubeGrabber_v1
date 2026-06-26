@@ -553,16 +553,23 @@ def main():
     p_eth = (_ROOT / calib["T_camera_to_base"]).resolve()
     p_eih = (_ROOT / calib["T_cam_end"]).resolve()
 
-    for p, name in [(p_eth, "ETH T_camera_to_base"), (p_eih, "EIH T_cam_end")]:
+    from config import load_calib_matrix
+
+    for p, name in [(p_eth, "ETH T_cam2base"), (p_eih, "EIH T_cam2end")]:
         if not p.exists():
             print(f"[ERROR] 找不到标定矩阵 [{name}]: {p}")
-            print("  → 将 .npy 文件放到 tubeGrabber_v1/assets/calib/")
+            print("  → 将 JSON 标定文件放到 tubeGrabber_v1/assets/calib/")
             sys.exit(1)
 
-    T_cam2base = np.load(str(p_eth))
-    T_cam_end  = np.load(str(p_eih))
-    print(f"[Init] ✓ ETH: {p_eth.name}  shape={T_cam2base.shape}")
-    print(f"[Init] ✓ EIH: {p_eih.name}  shape={T_cam_end.shape}")
+    try:
+        T_cam2base, eth_info = load_calib_matrix(p_eth)
+        T_cam_end, eih_info = load_calib_matrix(p_eih)
+    except (KeyError, ValueError) as e:
+        print(f"[ERROR] 标定矩阵加载失败: {e}")
+        sys.exit(1)
+
+    print(f"[Init] ✓ ETH: {p_eth.name}  shape={T_cam2base.shape}  ({eth_info})")
+    print(f"[Init] ✓ EIH: {p_eih.name}  shape={T_cam_end.shape}  ({eih_info})")
 
     # ── 连接机械臂 ────────────────────────────────────────────────────────────
     ac = CFG["arm"]
