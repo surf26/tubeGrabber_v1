@@ -1,0 +1,55 @@
+# tubeGrabber_v1 配置（所有路径均相对本文件所在目录）
+# -----------------------------------------------------------
+
+arm:
+  ip:   "192.168.1.18"
+  port: 8080
+
+cameras:
+  head_serial: "CPCS253000HM"   # head 相机序列号（俯视固定）
+  hand_serial: "CP84B4100090"   # hand 相机序列号（末端）
+  width:  640
+  height: 480
+
+yolo:
+  model_path: "assets/model/best.pt"   # 相对本目录
+  conf:   0.50
+  iou:    0.45
+  imgsz:  640
+  device: "cpu"     # "cpu" | "cuda:0"
+
+calib:
+  T_camera_to_base: "assets/calib/T_camera_to_base.npy"   # ETH head→base
+  T_cam_end:        "assets/calib/T_cam_end.npy"           # EIH hand_cam→end
+
+# hand 相机 OpenCV 精定位参数（黑色盖）
+hand_vision:
+  hsv_lower: [0,   0,   0]
+  hsv_upper: [180, 80, 70]
+  morph_kernel: 5
+  min_circularity: 0.50
+  min_area_px: 40
+  n_frames: 7               # 多帧中位数融合帧数
+  depth_roi_radius: 14      # 深度采样半径(px)
+
+depth:
+  min_m: 0.10
+  max_m: 2.00
+
+grasp:
+  hover_z:      0.10   # Phase2 悬停高度 (m)
+  pre_z:        0.08   # Phase3 精定位后悬停 (m)
+  touch_z:      0.003  # Phase3 接触下压量 (m)
+  lift_z:       0.15   # 提起高度 (m)
+  speed_coarse: 25     # Phase2 粗移速度 (%)
+  speed_fine:   20     # Phase3 精调速度 (%)
+  speed_grasp:  10     # 下压速度 (%)
+  speed_lift:   20     # 提起速度 (%)
+  settle_s:     0.5    # 到位后振动衰减等待 (s)
+
+gripper:
+  zero_speed: 25600
+  init_speed: 51200
+  run_speed:  51200
+  open_val:   0.80    # 开爪开度 (0~1)
+  close_val:  0.00    # 闭爪开度
